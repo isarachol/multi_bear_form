@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="marker_radius" value="0.05" />
+    <xacro:property name="marker_height" value="0.02" />
+
+    <joint name="$(arg robot_name)_marker_joint" type="fixed">
+        <parent link="$(arg robot_name)_chassis"/>
+        <child link="$(arg robot_name)_marker"/>
+        <origin xyz="0 0 ${(chassis_height + marker_height)/2}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="$(arg robot_name)_marker">
+        <visual>
+            <geometry>
+                <cylinder radius="${lens_radius}" length="${marker_height}"/>
+            </geometry>
+            <material name="yellow"/>
+        </visual>
+        <visual>
+            <origin xyz="0 0 ${marker_height/2 + marker_radius}" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="${marker_radius}"/>
+            </geometry>
+            <material name="yellow"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="${marker_radius}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="2.53e-4" iyy="2.53e-4" izz="5e-4" ixy="0" ixz="0" iyz="0"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="$(arg robot_name)_marker">
+        <material>Gazebo/Yellow</material>
+    </gazebo>
+
+</robot>
