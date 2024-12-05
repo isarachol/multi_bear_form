@@ -11,33 +11,33 @@ from launch_ros.actions import Node
 import xacro
 
 def launch_setup(context, *args, **kwargs):
+    '''
+    Will be called from generate_launch_description
+    '''
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_name = LaunchConfiguration('robot_name').perform(context)
+    use_ros2_control = LaunchConfiguration('use_ros2_control').perform(context)
 
     # Process the URDF file from XACRO
     my_package_name = 'multi_bear_form'
     pkg_path = os.path.join(get_package_share_directory(my_package_name))
     xacro_file_path = os.path.join(pkg_path,'description','robot_car.urdf.xacro')
-    
-    robot_description_topic_name = "/" + robot_name + "/robot_description"
-    joint_state_topic_name = "/" + robot_name + "/joint_states" # may not use?
-    robot_state_publisher_name = robot_name + "_robot_state_publisher"
-    # robot_description_config = Command(['xacro ', xacro_file,
-    #                                     ' use_ros2_control:=', use_ros2_control])
-    robot_description_config = xacro.process_file(xacro_file_path, mappings={'robot_name': robot_name}).toxml()
+
+    robot_description_config = xacro.process_file(xacro_file_path, mappings={'use_ros2_control': use_ros2_control,
+                                                                             'robot_name': robot_name,}).toxml() # 'robot_name': robot_name,
 
     # Create a robot_state_publisher node
     params = {'robot_description': robot_description_config, 'use_sim_time': use_sim_time,}
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        name=robot_state_publisher_name,
+        name='robot_state_publisher',
         output='screen',
         parameters=[params],
-        remappings=[("/robot_description", robot_description_topic_name),
-                    ("/joint_states", joint_state_topic_name)]
+        namespace=robot_name,
     )
+
     return [node_robot_state_publisher]
 
 def generate_launch_description():
@@ -51,10 +51,10 @@ def generate_launch_description():
     #     parameters=[params2]
     # )
 
-    # rviz_config = os.path.join(
-    #     get_package_share_directory('bearing_formation_control'), 'config',
-    #     'xmobile_agent.rviz'
-    #     )
+    rviz_config = os.path.join(
+        get_package_share_directory('multi_bear_form'), 'config',
+        'xmobile_agent.rviz'
+        )
     
     # teleop_node = Node(
     #     package='teleop_twist_keyboard',
@@ -62,7 +62,6 @@ def generate_launch_description():
     #     name='teleop_twist_keyboard',
     #     remappings=[('/cmd_vel', 'diff_cont/cmd_vel_unstamped')],
     # )
-
 
     # use_ros2_control = LaunchConfiguration('use_ros2_control')
 
