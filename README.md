@@ -1,4 +1,4 @@
-# ME570-Final-Project
+# Multi Robot Formation Control
 This repo is part of ME 570 Final Project repo. The purpose is to keep track of my own progress and document changes that is easy to follow for educational purpose. This is a version adapted from bearing_formation_control but adds multi agent capability.
 
 ## Tutorials
